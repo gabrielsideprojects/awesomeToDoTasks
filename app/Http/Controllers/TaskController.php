@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TaskController extends Controller
 {
@@ -11,7 +14,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
+        return Task::all();
     }
 
     /**
@@ -27,7 +30,20 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        try {
+            Task::create($request->post());
+
+            return response()->json([
+                'message' => 'Task Created Successfully!!'
+            ]);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json([
+                'message' => 'Something goes wrong while creating the task!!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -35,7 +51,10 @@ class TaskController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $task = Task::find($id);
+        return response()->json([
+            'task' => $task
+        ]);
     }
 
     /**
@@ -59,6 +78,16 @@ class TaskController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            Task::find($id)->delete();
+            return response()->json([
+                'message' => 'Task deleted with success!!'
+            ]);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json([
+                'message' => 'Something goes wrong while deleting the task!!'
+            ], 500);
+        }
     }
 }
