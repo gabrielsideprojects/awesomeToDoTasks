@@ -65,6 +65,7 @@ class TaskController extends Controller
         //
     }
 
+
     /**
      * Update the specified resource in storage.
      */
@@ -72,6 +73,21 @@ class TaskController extends Controller
     {
         //
     }
+
+    public function markTaskCompleted(Request $request, string $id)
+    {
+        // Find the resource by ID
+        $task = Task::findOrFail($id);
+
+        // Update the resource properties based on the request data
+        $task->completedAt = date('c');
+
+        $task->save();
+
+        // Return a response indicating the successful update
+        return response()->json(['message' => 'Task updated successfully']);
+    }
+
 
     /**
      * Remove the specified resource from storage.
